@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import { Inter as FontSans } from "next/font/google";
 import "./globals.css";
-
+import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import Navbar from "@/components/Navbar";
+import { Navbars } from "@/components/Navbar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -32,10 +32,17 @@ export default async function RootLayout({
             fontSans.variable
           )}
         >
-          <div className="mx-auto max-w-screen-lg h-screen flex flex-col">
-            <Navbar />
-            <div className="flex-grow">{children}</div>
-          </div>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <div className="mx-auto max-w-screen-lg h-screen flex flex-col">
+              <Navbars />
+              <div className="flex-grow">{children}</div>
+            </div>
+          </ThemeProvider>
         </body>
       </html>
     </SessionProvider>

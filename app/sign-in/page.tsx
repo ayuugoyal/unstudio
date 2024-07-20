@@ -3,7 +3,7 @@ import React from "react";
 
 const SignIn = () => {
   return (
-    <div>
+    <div className="flex justify-center items-center h-full">
       <LoginForm />
     </div>
   );
