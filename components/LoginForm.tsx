@@ -2,10 +2,10 @@
 import React, { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/lib/utils";
 import { IconBrandGithub, IconBrandGoogle } from "@tabler/icons-react";
 import { login, loginWithCreds } from "@/actions/auth";
 import { useFormStatus } from "react-dom";
+import { cn } from "@/lib/utils";
 
 export function LoginForm() {
   const { pending } = useFormStatus();
@@ -19,18 +19,29 @@ export function LoginForm() {
     const result = await loginWithCreds(formData);
     setIsSubmitting(false);
     if (result?.error) {
-      setErrorMessage(result.error);
+      console.error(result);
+      handleAuthError(result.error);
     }
+  };
+
+  const handleAuthError = (error: any) => {
+    console.error(error);
+    setErrorMessage(
+      error.replace(
+        "Read more at https://errors.authjs.dev#callbackrouteerror",
+        ""
+      )
+    );
   };
 
   return (
     <div className="max-w-md w-full mx-auto rounded-none md:rounded-2xl p-4 md:p-8 shadow-input bg-white dark:bg-black">
       <h2 className="font-bold text-xl text-neutral-800 dark:text-neutral-200">
-        Welcome to Aceternity
+        Welcome to UnStudio
       </h2>
 
       {errorMessage && (
-        <div className="bg-red-500 text-white p-2 rounded-md mb-4">
+        <div className="bg-red-500 text-white p-2 rounded-md mb-4 mt-3">
           {errorMessage}
         </div>
       )}

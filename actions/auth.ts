@@ -1,5 +1,5 @@
 "use server";
-import { signIn, signOut } from "@/auth";
+import { auth, signIn, signOut } from "@/auth";
 import { db } from "@/db";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
@@ -19,7 +19,7 @@ const getUserbyEmail = async (email: string) => {
 };
 
 export const login = async (provider: string) => {
-  await signIn(provider, { redirectTo: "/" });
+  await signIn(provider, { redirectTo: "/dashboard" });
   revalidatePath("/");
 };
 
@@ -33,7 +33,7 @@ export const loginWithCreds = async (formData: FormData) => {
     name: formData.get("name") as string,
     email: formData.get("email") as string,
     password: formData.get("password") as string,
-    redirectTo: "/",
+    redirectTo: "/dashboard",
   };
 
   console.log("Form submitted");
@@ -53,4 +53,12 @@ export const loginWithCreds = async (formData: FormData) => {
   }
 
   revalidatePath("/");
+};
+
+export const getUserData = async () => {
+  const session = await auth();
+  if (!session) {
+    return null;
+  }
+  return session;
 };

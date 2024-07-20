@@ -5,7 +5,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
-import { Navbars } from "@/components/Navbar";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -38,8 +37,7 @@ export default async function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <div className="mx-auto max-w-screen-lg h-screen flex flex-col">
-              <Navbars />
+            <div className="h-screen flex flex-col">
               <div className="flex-grow">{children}</div>
             </div>
           </ThemeProvider>
