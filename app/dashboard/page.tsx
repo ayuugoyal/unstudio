@@ -16,7 +16,6 @@ import { getUserData } from "@/actions/auth";
 import { logout } from "@/actions/auth";
 import Draw from "@/components/Draw";
 import { getUserImages } from "@/actions/user";
-import Upload from "@/components/Upload";
 import { User } from "@prisma/client";
 
 export default function Page() {

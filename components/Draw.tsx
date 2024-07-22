@@ -16,6 +16,7 @@ import {
   RectangleVertical,
   Triangle,
 } from "lucide-react";
+import Recorder from "./Recorder";
 
 const Draw = () => {
   const canvasRef = useRef<fabric.Canvas | null>(null);
@@ -337,6 +338,7 @@ const Draw = () => {
           <Button onClick={deleteObject}>Delete Object</Button>
           <Button onClick={centerObject}>Center Object</Button>
         </div>
+        <Recorder />
       </div>
     </div>
   );
