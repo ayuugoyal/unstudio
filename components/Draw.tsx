@@ -48,6 +48,9 @@ const Draw = () => {
       const formData = new FormData();
       formData.append("image", image);
       const res = await axios.post("/api/upload-image", formData);
+      toast({
+        description: "Image uploaded successfully",
+      });
       setImage(null);
       const data = res.data;
       setLoader(true);
