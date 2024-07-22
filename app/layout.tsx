@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from "@/lib/utils";
 import { SessionProvider } from "next-auth/react";
 import { auth } from "@/auth";
+import { Toaster } from "@/components/ui/toaster";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default async function RootLayout({
             <div className="h-screen flex flex-col">
               <div className="flex-grow">{children}</div>
             </div>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

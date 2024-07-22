@@ -16,10 +16,12 @@ import {
   RectangleVertical,
   Triangle,
 } from "lucide-react";
-import Recorder from "./Recorder";
+import { useToast } from "@/components/ui/use-toast";
 
 const Draw = () => {
   // const canvasRef = useRef<fabric.Canvas | null>(null);
+
+  const { toast } = useToast();
   const [canvas, setCanvas] = useState<fabric.Canvas>();
 
   const [image, setImage] = useState<File | null>(null);
@@ -37,12 +39,18 @@ const Draw = () => {
   const OnSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      setLoader(true);
-      if (!image) return;
+      if (!image) {
+        toast({
+          description: "Please select an image",
+        });
+        return;
+      }
       const formData = new FormData();
       formData.append("image", image);
       const res = await axios.post("/api/upload-image", formData);
+      setImage(null);
       const data = res.data;
+      setLoader(true);
       console.log(data);
       fetchImage();
       setLoader(false);
