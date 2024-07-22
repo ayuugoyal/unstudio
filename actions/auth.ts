@@ -62,7 +62,7 @@ export const getUserData = async () => {
     if (!session) {
       return null;
     }
-    const data: User | null = await db.user.findFirst({
+    const data: User | null = await db.user.findUnique({
       where: {
         email: session?.email,
       },
