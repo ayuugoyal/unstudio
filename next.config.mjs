@@ -1,7 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
-    domains: ["avatars.githubusercontent.com", "assets.aceternity.com"],
+    domains: [
+      "avatars.githubusercontent.com",
+      "assets.aceternity.com",
+      "res.cloudinary.com",
+    ],
+  },
+  webpack: (config) => {
+    config.externals.push({
+      "utf-8-validate": "commonjs utf-8-validate",
+      bufferutil: "commonjs bufferutil",
+      canvas: "commonjs canvas",
+    });
+    // config.infrastructureLogging = { debug: /PackFileCache/ };
+    return config;
   },
 };
 

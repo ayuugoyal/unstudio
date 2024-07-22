@@ -1,6 +1,7 @@
 "use server";
 import { auth, signIn, signOut } from "@/auth";
 import { db } from "@/db";
+import { User } from "@prisma/client";
 import { AuthError } from "next-auth";
 import { revalidatePath } from "next/cache";
 
@@ -56,9 +57,21 @@ export const loginWithCreds = async (formData: FormData) => {
 };
 
 export const getUserData = async () => {
-  const session = await auth();
-  if (!session) {
-    return null;
+  try {
+    const session: User | null = (await auth()) as User | null;
+    if (!session) {
+      return null;
+    }
+    const data: User | null = await db.user.findFirst({
+      where: {
+        email: session?.email,
+      },
+    });
+    return data;
+  } catch (error: any) {
+    console.error(error);
+    return {
+      error: error.message,
+    };
   }
-  return session;
 };

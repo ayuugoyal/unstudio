@@ -36,7 +36,7 @@ export default function Home() {
         <div className="font-extralight text-base md:text-4xl dark:text-neutral-200 py-4">
           Draw and upload your images and make them come to life
         </div>
-        {session?.user ? (
+        {session?.id ? (
           <Link href="/dashboard">
             <button className="bg-black dark:bg-white rounded-full w-fit text-white dark:text-black px-4 py-2">
               Go to Dashboard →

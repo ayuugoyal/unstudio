@@ -12,18 +12,21 @@ import { motion } from "framer-motion";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { ModeToggle } from "@/components/ModeToggle";
-import Logout from "@/components/Logout";
 import { getUserData } from "@/actions/auth";
 import { logout } from "@/actions/auth";
+import Draw from "@/components/Draw";
+import { getUserImages } from "@/actions/user";
+import Upload from "@/components/Upload";
+import { User } from "@prisma/client";
 
 export default function Page() {
-  const [session, setSession] = useState<any>();
+  const [session, setSession] = useState<User | null>();
 
   useEffect(() => {
     async function fetchData() {
-      const data = await getUserData();
-      console.log(data);
+      const data: User | null = (await getUserData()) as User | null;
       setSession(data);
+      console.log(data);
     }
     fetchData();
   }, []);
@@ -91,10 +94,10 @@ export default function Page() {
             <div onClick={() => setView("Profile")}>
               <SidebarLink
                 link={{
-                  label: session?.user?.name || "Add your name",
+                  label: session?.name || "Add your name",
                   icon: (
                     <Image
-                      src={session?.user?.image || "/avatar.png"}
+                      src={session?.image || "/avatar.png"}
                       alt="Avatar"
                       width={50}
                       height={50}
@@ -146,11 +149,15 @@ export const LogoIcon = () => {
 };
 
 const Dashboard = () => {
-  return <div>Dashboard</div>;
+  return (
+    <div>
+      <Draw />
+    </div>
+  );
 };
 
 const Settings = () => {
-  return <div>Settiu</div>;
+  return <div>Setting</div>;
 };
 
 const Profile = () => {
