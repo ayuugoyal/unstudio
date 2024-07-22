@@ -2,7 +2,6 @@
 
 import { useReactMediaRecorder } from "react-media-recorder";
 import { Button } from "./ui/button";
-import { uploadImage } from "@/lib/uploadImage";
 import { useEffect } from "react";
 
 const Recorder = () => {

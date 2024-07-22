@@ -19,7 +19,7 @@ import {
 import Recorder from "./Recorder";
 
 const Draw = () => {
-  const canvasRef = useRef<fabric.Canvas | null>(null);
+  // const canvasRef = useRef<fabric.Canvas | null>(null);
   const [canvas, setCanvas] = useState<fabric.Canvas>();
 
   const [image, setImage] = useState<File | null>(null);
@@ -65,11 +65,11 @@ const Draw = () => {
       width: 600,
     });
 
-    fabric.Object.prototype.transparentCorners = false;
-    fabric.Object.prototype.cornerColor = "#2BEBC8";
-    fabric.Object.prototype.cornerStyle = "rect";
-    fabric.Object.prototype.cornerStrokeColor = "#2BEBC8";
-    fabric.Object.prototype.cornerSize = 6;
+    fabric.FabricObject.prototype.transparentCorners = false;
+    fabric.FabricObject.prototype.cornerColor = "#2BEBC8";
+    fabric.FabricObject.prototype.cornerStyle = "rect";
+    fabric.FabricObject.prototype.cornerStrokeColor = "#2BEBC8";
+    fabric.FabricObject.prototype.cornerSize = 6;
 
     setCanvas(c);
 
@@ -338,7 +338,7 @@ const Draw = () => {
           <Button onClick={deleteObject}>Delete Object</Button>
           <Button onClick={centerObject}>Center Object</Button>
         </div>
-        <Recorder />
+        {/* <Recorder /> */}
       </div>
     </div>
   );
