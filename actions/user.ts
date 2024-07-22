@@ -2,7 +2,8 @@
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { Image } from "@prisma/client";
+import { Image, User } from "@prisma/client";
+import { getUserData } from "./auth";
 
 export const getUserImages = async () => {
   try {
@@ -14,8 +15,10 @@ export const getUserImages = async () => {
       return { message: "Unauthorized", status: 401 };
     }
 
+    const getUser: any = await getUserData();
+
     const images: Image[] = await db.image.findMany({
-      where: { userId: session?.user?.id },
+      where: { userId: getUser.id },
     });
 
     return images;

@@ -64,10 +64,10 @@ export const getUserData = async () => {
     }
     const data: User | null = await db.user.findUnique({
       where: {
-        email: session?.email,
+        email: session.email,
       },
     });
-    return data;
+    return data as User;
   } catch (error: any) {
     console.error(error);
     return {
