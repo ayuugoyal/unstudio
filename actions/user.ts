@@ -17,6 +17,8 @@ export const getUserImages = async () => {
 
     const getUser: any = await getUserData();
 
+    console.log("User:", getUser);
+
     const images: Image[] = await db.image.findMany({
       where: { userId: getUser.id },
     });

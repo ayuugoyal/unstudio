@@ -58,13 +58,13 @@ export const loginWithCreds = async (formData: FormData) => {
 
 export const getUserData = async () => {
   try {
-    const session: User | null = (await auth()) as User | null;
+    const session: any = await auth();
     if (!session) {
       return null;
     }
     const data: User | null = await db.user.findUnique({
       where: {
-        email: session.email,
+        email: session.user.email,
       },
     });
     return data as User;

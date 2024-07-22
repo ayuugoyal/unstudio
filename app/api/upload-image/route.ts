@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
 import { NextRequest, NextResponse } from "next/server";
-import cloudinary from "@/lib/cloudinary";
 import { db } from "@/db";
 import { uploadImage } from "@/lib/uploadImage";
 import { getUserData } from "@/actions/auth";
