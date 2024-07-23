@@ -79,7 +79,7 @@ const VideoForm: React.FC = () => {
   return (
     <div className="flex justify-center items-center h-screen">
       <form onSubmit={handleSubmit} className="flex flex-col gap-1.5">
-        <div>
+        <div className="w-[600px]">
           <Label>Upload Intro Video or Image:</Label>
           <Input
             type="file"
