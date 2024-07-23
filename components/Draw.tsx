@@ -17,6 +17,7 @@ import {
   Triangle,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import ScreenRecorder from "@/components/Recorder";
 
 const Draw = () => {
   // const canvasRef = useRef<fabric.Canvas | null>(null);
@@ -349,7 +350,7 @@ const Draw = () => {
           <Button onClick={deleteObject}>Delete Object</Button>
           <Button onClick={centerObject}>Center Object</Button>
         </div>
-        {/* <Recorder /> */}
+        <ScreenRecorder />
       </div>
     </div>
   );
