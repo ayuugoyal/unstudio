@@ -15,6 +15,8 @@ import { getUserData } from "@/actions/auth";
 import { logout } from "@/actions/auth";
 import Draw from "@/components/Draw";
 import { User } from "@prisma/client";
+import VideoForm from "@/components/VideoForm";
+import { VideoIcon } from "lucide-react";
 
 export default function Page() {
   const [session, setSession] = useState<User | null>();
@@ -43,9 +45,9 @@ export default function Page() {
       ),
     },
     {
-      label: "Settings",
+      label: "Generate video with rerender",
       icon: (
-        <IconSettings className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
+        <VideoIcon className="text-neutral-700 dark:text-neutral-200 h-5 w-5 flex-shrink-0" />
       ),
     },
   ];
@@ -119,14 +121,18 @@ export default function Page() {
 
 const Dashboard = () => {
   return (
-    <div>
+    <div className="felx justify-center items-center">
       <Draw />
     </div>
   );
 };
 
 const Settings = () => {
-  return <div>Setting</div>;
+  return (
+    <div>
+      <VideoForm />
+    </div>
+  );
 };
 
 const Profile = () => {

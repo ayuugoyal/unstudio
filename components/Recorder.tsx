@@ -1,6 +1,9 @@
 "use client";
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Input } from "./ui/input";
+import { Copy } from "lucide-react";
+import { toast } from "./ui/use-toast";
 
 const ScreenRecorder = () => {
   const screenRecording = useRef<HTMLVideoElement | null>(null);
@@ -9,7 +12,8 @@ const ScreenRecorder = () => {
     null
   );
   const [recordedBlob, setRecordedBlob] = useState<Blob | null>(null);
-  const [videoUrl, setVideoUrl] = useState<string | null>(null); // State to store Cloudinary video URL
+  const [videoUrl, setVideoUrl] = useState<string | null>(null);
+  const [loaded, setLoaded] = useState<boolean>(false);
 
   const startScreenRecording = async () => {
     try {
@@ -47,8 +51,8 @@ const ScreenRecorder = () => {
     }
   };
 
-  // Function to handle uploading recordedBlob to Cloudinary
   const uploadToCloudinary = async () => {
+    setLoaded(true);
     try {
       if (!recordedBlob) {
         console.error("No recorded video available");
@@ -75,27 +79,78 @@ const ScreenRecorder = () => {
     } catch (error) {
       console.error("Error uploading to Cloudinary:", error);
     }
+    setLoaded(false);
   };
 
   return (
-    <div>
+    <div className="flex flex-col gap-2 w-96">
       <Button onClick={() => startScreenRecording()}>Start Recording</Button>
       <Button onClick={() => recorder && recorder.stop()}>
         Stop Recording
       </Button>
-      {videoUrl && (
-        <video ref={screenRecording} height={300} width={600} controls>
-          <source src={videoUrl} type="video/webm" />
-          Your browser does not support the video tag.
-        </video>
-      )}
       {recordedBlob && (
-        <Button onClick={() => uploadToCloudinary()}>
-          Upload to Cloudinary
-        </Button>
+        <>
+          <h1 className="text-xl font-bold mb-4 mt-3">Preview:</h1>
+          <video ref={screenRecording} height={200} width={400} controls>
+            <source src={URL.createObjectURL(recordedBlob)} type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
+          <Button onClick={() => uploadToCloudinary()} disabled={loaded}>
+            {loaded ? <Loader /> : "Upload to Cloudinary"}
+          </Button>
+        </>
+      )}
+
+      {videoUrl && (
+        <div className="flex flex-col gap-2">
+          <h1 className="text-xl font-bold mb-4 mt-3">Uploaded Video:</h1>
+          <video ref={screenRecording} height={200} width={400} controls>
+            <source src={videoUrl} type="video/webm" />
+            Your browser does not support the video tag.
+          </video>
+          <div className="flex gap-2">
+            <Input type="text" value={videoUrl} />
+            <Button
+              size="icon"
+              onClick={() => {
+                navigator.clipboard.writeText(videoUrl);
+                toast({
+                  title: "Copied to clipboard",
+                  description: "Video URL copied to clipboard",
+                });
+              }}
+            >
+              <Copy />
+            </Button>
+          </div>
+        </div>
       )}
     </div>
   );
 };
 
 export default ScreenRecorder;
+const Loader = () => (
+  <div className="flex justify-center items-center">
+    <svg
+      className="animate-spin h-5 w-5 text-white dark:text-black"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 24 24"
+    >
+      <circle
+        className="opacity-25"
+        cx="12"
+        cy="12"
+        r="10"
+        stroke="currentColor"
+        strokeWidth="4"
+      ></circle>
+      <path
+        className="opacity-75"
+        fill="currentColor"
+        d="M4 12a8 8 0 018-8v8H4zm2 5.292A8.001 8.001 0 0112 4v8H6v5.292z"
+      ></path>
+    </svg>
+  </div>
+);

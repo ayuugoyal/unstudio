@@ -39,6 +39,8 @@ const Draw = () => {
 
   const OnSubmitHandler = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoader(true);
+
     try {
       if (!image) {
         toast({
@@ -54,13 +56,12 @@ const Draw = () => {
       });
       setImage(null);
       const data = res.data;
-      setLoader(true);
       console.log(data);
       fetchImage();
-      setLoader(false);
     } catch (error: any) {
       console.error("Error uploading image:", error);
     }
+    setLoader(false);
   };
 
   async function fetchImage() {
@@ -278,14 +279,12 @@ const Draw = () => {
           <div className="grid w-full max-w-sm items-center gap-1.5">
             <Input onChange={OnChangeHandler} id="" type="file" />
           </div>
-          <Button className="w-40">Upload</Button>
+          <Button className="w-40" disabled={image === null || loader}>
+            {loader ? <Loader /> : "Upload"}
+          </Button>
         </form>
         <div className="flex flex-wrap border border-3 rounded-xl">
-          {loader ? (
-            <div className="flex justify-center items-center w-full min-h-80">
-              <Loader />
-            </div>
-          ) : userImages?.length !== 0 ? (
+          {userImages?.length !== 0 ? (
             userImages && (
               <ParallaxScroll images={userImages.map((image) => image.url)} />
             )
@@ -295,39 +294,36 @@ const Draw = () => {
             </div>
           )}
         </div>
-      </div>
-      <div className="flex flex-row gap-7">
-        <canvas id="canvas" className="border border-3 w-44 h-44" />
         <div className="flex flex-col gap-2 ">
           <div className="grid grid-cols-3 gap-2">
             <Button
               onClick={() => addHorizontalRect(canvas as fabric.Canvas)}
-              className="h-20 w-20"
+              className="h-full w-full"
             >
               <RectangleHorizontalIcon className="h-full w-full" />
             </Button>
             <Button
               onClick={() => addVerticalRect(canvas as fabric.Canvas)}
-              className="h-20 w-20"
+              className="h-full w-full"
             >
               <RectangleVertical className="h-full w-full" />
             </Button>
             <Button
               onClick={() => addDiamond(canvas as fabric.Canvas)}
-              className="h-20 w-20"
+              className="h-full w-full"
             >
               <DiamondIcon className="h-full w-full" />
             </Button>
             <Button
               onClick={() => addCircle(canvas as fabric.Canvas)}
-              className="h-20 w-20"
+              className="h-full w-full"
             >
               <Circle className="h-full w-full" />
             </Button>
-            <Button onClick={addTriangle} className="h-20 w-20">
+            <Button onClick={addTriangle} className="h-full w-full">
               <Triangle className="h-full w-full" />
             </Button>
-            <Button onClick={addParallelogram} className="h-20 w-20">
+            <Button onClick={addParallelogram} className="h-full w-full">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 viewBox="0 0 100 60"
@@ -350,6 +346,9 @@ const Draw = () => {
           <Button onClick={deleteObject}>Delete Object</Button>
           <Button onClick={centerObject}>Center Object</Button>
         </div>
+      </div>
+      <div className="flex flex-row gap-7">
+        <canvas id="canvas" className="border border-3 w-44 h-44" />
         <ScreenRecorder />
       </div>
     </div>
