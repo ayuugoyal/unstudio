@@ -54,3 +54,31 @@ export const deleteAnImage = async (id: string) => {
     };
   }
 };
+
+export const setUserName = async (name: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return { message: "Unauthorized", status: 401 };
+    }
+
+    const getUser: any = await getUserData();
+
+    const user: User = await db.user.update({
+      where: {
+        id: getUser.id,
+      },
+      data: {
+        name: name,
+      },
+    });
+
+    return user;
+  } catch (error: any) {
+    console.error(error);
+    return {
+      error: error.message,
+    };
+  }
+};

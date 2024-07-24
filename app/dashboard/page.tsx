@@ -17,16 +17,17 @@ import Draw from "@/components/Draw";
 import { User } from "@prisma/client";
 import VideoForm from "@/components/VideoForm";
 import { VideoIcon } from "lucide-react";
+import { ProfileForm } from "@/components/Profile";
 
 export default function Page() {
   const [session, setSession] = useState<User | null>();
+  async function fetchData() {
+    const data: User | null = (await getUserData()) as User | null;
+    setSession(data);
+    console.log(data);
+  }
 
   useEffect(() => {
-    async function fetchData() {
-      const data: User | null = (await getUserData()) as User | null;
-      setSession(data);
-      console.log(data);
-    }
     fetchData();
   }, []);
 
@@ -112,7 +113,11 @@ export default function Page() {
         <div className="p-2 md:p-10 rounded-t-2xl sm:rounded-l-2xl border border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900 flex flex-col gap-2 flex-1 w-full h-full">
           {view == "Dashboard" && Dashboard()}
           {view == "Generate video with rerender" && Settings()}
-          {view == "Profile" && Profile()}
+          {view == "Profile" && (
+            <div className="felx justify-center items-center">
+              <ProfileForm fetchData={fetchData} />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -133,8 +138,4 @@ const Settings = () => {
       <VideoForm />
     </div>
   );
-};
-
-const Profile = () => {
-  return <div>Profile</div>;
 };
