@@ -31,3 +31,26 @@ export const getUserImages = async () => {
     };
   }
 };
+
+export const deleteAnImage = async (id: string) => {
+  try {
+    const session = await auth();
+
+    if (!session) {
+      return { message: "Unauthorized", status: 401 };
+    }
+
+    const image: Image = await db.image.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    return image;
+  } catch (error: any) {
+    console.error(error);
+    return {
+      error: error.message,
+    };
+  }
+};

@@ -1,6 +1,6 @@
 "use client";
 
-import * as fabric from "fabric";
+import { fabric } from "fabric";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import axios from "axios";
@@ -10,18 +10,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ParallaxScroll } from "@/components/ui/parallax-scroll";
 import {
+  AlignCenterVertical,
+  AlignEndVertical,
+  AlignHorizontalSpaceAround,
+  AlignStartVertical,
   Circle,
   DiamondIcon,
   RectangleHorizontalIcon,
   RectangleVertical,
+  Trash2,
   Triangle,
 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import ScreenRecorder from "@/components/Recorder";
+import Image from "next/image";
 
 const Draw = () => {
-  // const canvasRef = useRef<fabric.Canvas | null>(null);
-
   const { toast } = useToast();
   const [canvas, setCanvas] = useState<fabric.Canvas>();
 
@@ -78,24 +82,13 @@ const Draw = () => {
       width: 600,
     });
 
-    fabric.FabricObject.prototype.transparentCorners = false;
-    fabric.FabricObject.prototype.cornerColor = "#2BEBC8";
-    fabric.FabricObject.prototype.cornerStyle = "rect";
-    fabric.FabricObject.prototype.cornerStrokeColor = "#2BEBC8";
-    fabric.FabricObject.prototype.cornerSize = 6;
+    fabric.Object.prototype.transparentCorners = false;
+    fabric.Object.prototype.cornerColor = "#2BEBC8";
+    fabric.Object.prototype.cornerStyle = "rect";
+    fabric.Object.prototype.cornerStrokeColor = "#2BEBC8";
+    fabric.Object.prototype.cornerSize = 6;
 
     setCanvas(c);
-
-    // fabric.FabricImage.fromURL(
-    //   "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-    //   function (img: fabric.Image) {
-    //     // img.filters.push(new fabric.FabricImage.filters.Sepia());
-    //     // img.applyFilters();
-    //     // add image onto canvas (it also re-render the canvas)
-    //     canvas && canvas.add(img);
-    //     console.log("image added");
-    //   }
-    // );
 
     setLoader(false);
     return () => {
@@ -103,46 +96,36 @@ const Draw = () => {
     };
   }, []);
 
-  // const addImageToCanvas = () => {
-  //   fabric.Image.fromURL(
-  //     "https://example.com/image.jpg",
-  //     (img: fabric.Image) => {
-  //       // Ensure img is typed as fabric.Image
-  //       // Callback function executed after image is loaded
-  //       img.set({ left: 250, top: 250, angle: 30 }).scale(0.25);
-  //       canvas && canvas.add(img); // Assuming 'canvas' is your Fabric.js canvas object
-  //     },
-  //     { crossOrigin: "anonymous" } as fabric.ILoadImageOptions // Cast options to fabric.ILoadImageOptions if needed
-  //   );
-  // };
-  // const addImageToCanvas = (
-  //   canvas: fabric.Canvas,
-  //   imageURL: string,
-  //   options?: { left?: number; top?: number; scale?: number }
-  // ): Promise<fabric.Image> => {
-  //   return new Promise((resolve, reject) => {
-  //     function simpleCallback(img: fabric.Image) {
-  //       if (options) {
-  //         if (options.left !== undefined) img.left = options.left;
-  //         if (options.top !== undefined) img.top = options.top;
-  //         if (options.scale !== undefined) img.scale(options.scale);
-  //       }
-  //       canvas.add(img);
-  //       return resolve(img);
-  //     }
+  const addImageToCanvas = (
+    canvas: fabric.Canvas,
+    imageURL: string,
+    options?: { left?: number; top?: number; scale?: number }
+  ): Promise<fabric.Image> => {
+    return new Promise((resolve, reject) => {
+      function simpleCallback(img: fabric.Image) {
+        if (options) {
+          if (options.left !== undefined) img.left = options.left;
+          if (options.top !== undefined) img.top = options.top;
+          if (options.scale !== undefined) img.scale(options.scale);
+        }
+        canvas.add(img);
+        return resolve(img);
+      }
 
-  //     fabric.Image.fromURL(imageURL, simpleCallback, {
-  //       crossOrigin: "anonymous",
-  //     });
+      fabric.Image.fromURL(imageURL, simpleCallback, {
+        crossOrigin: "anonymous",
+      });
 
-  //     canvas.renderAll();
-  //   });
-  // };
+      canvas.renderAll();
+    });
+  };
 
   const deleteObject = () => {
-    const activeObject = canvas?.getActiveObject();
-    if (activeObject) {
-      canvas?.remove(activeObject);
+    const activeObjects = canvas?.getActiveObjects();
+    if (activeObjects && activeObjects.length > 0) {
+      activeObjects.forEach((object) => {
+        canvas?.remove(object);
+      });
       canvas?.discardActiveObject();
       canvas?.requestRenderAll();
     }
@@ -272,6 +255,56 @@ const Draw = () => {
     }
   };
 
+  const alignLeft = () => {
+    const activeObjects = canvas?.getActiveObjects() as fabric.Object[];
+    if (activeObjects && activeObjects.length > 1) {
+      const leftMostObject = activeObjects.reduce((prev, current) =>
+        prev.left! < current.left! ? prev : current
+      );
+      const leftPosition = leftMostObject.left!;
+      activeObjects.forEach((object) => {
+        object.set({ left: leftPosition });
+        object.setCoords();
+      });
+      canvas?.renderAll();
+    }
+  };
+
+  const alignRight = () => {
+    const activeObjects = canvas?.getActiveObjects() as fabric.Object[];
+    if (activeObjects && activeObjects.length > 1) {
+      const rightMostObject = activeObjects.reduce((prev, current) =>
+        prev.left! > current.left! ? prev : current
+      );
+      const rightPosition = rightMostObject.left! + rightMostObject.width!;
+      activeObjects.forEach((object) => {
+        const objectRightPosition = object.left! + object.width!;
+        object.set({ left: rightPosition - objectRightPosition });
+        object.setCoords();
+      });
+      canvas?.renderAll();
+    }
+  };
+
+  const alignCenter = () => {
+    const activeObjects = canvas?.getActiveObjects() as fabric.Object[];
+    if (activeObjects && activeObjects.length > 1) {
+      const totalWidth = activeObjects.reduce(
+        (sum, object) => sum + (object.width || 0),
+        0
+      );
+      const centerPosition = (canvas?.width! || 0) / 2 - totalWidth / 2;
+      let currentPosition = centerPosition;
+      activeObjects.forEach((object) => {
+        const objectWidth = object.width || 0;
+        object.set({ left: currentPosition });
+        object.setCoords();
+        currentPosition += objectWidth;
+      });
+      canvas?.renderAll();
+    }
+  };
+
   return (
     <div className="flex flex-col sm:flex-row gap-7 h-screen">
       <div className="w-96 gap-7 flex flex-col">
@@ -286,7 +319,12 @@ const Draw = () => {
         <div className="flex flex-wrap border border-3 rounded-xl">
           {userImages?.length !== 0 ? (
             userImages && (
-              <ParallaxScroll images={userImages.map((image) => image.url)} />
+              <ParallaxScroll
+                images={userImages.map((image) => image)}
+                addImageToCanvas={addImageToCanvas}
+                canvas={canvas as fabric.Canvas}
+                fetchImage={fetchImage}
+              />
             )
           ) : (
             <div className="flex justify-center items-center w-full min-h-80">
@@ -333,7 +371,6 @@ const Draw = () => {
               </svg>
             </Button>
           </div>
-          <Button onClick={clearCanvas}>Clear Canvas</Button>
           <Label>Select a object to use these:</Label>
           <div className="flex items-center gap-2">
             <Label htmlFor="color">Color:</Label>
@@ -343,8 +380,41 @@ const Draw = () => {
               onChange={(e) => changeObjectColor(e.target.value)}
             />
           </div>
-          <Button onClick={deleteObject}>Delete Object</Button>
-          <Button onClick={centerObject}>Center Object</Button>
+          <div className="flex gap-2 ">
+            <Button onClick={deleteObject} size="icon">
+              <Trash2 />
+            </Button>
+            <Button onClick={clearCanvas} size="icon">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="m13 11 9-9" />
+                <path d="M14.6 12.6c.8.8.9 2.1.2 3L10 22l-8-8 6.4-4.8c.9-.7 2.2-.6 3 .2Z" />
+                <path d="m6.8 10.4 6.8 6.8" />
+                <path d="m5 17 1.4-1.4" />
+              </svg>
+            </Button>
+            <Button onClick={centerObject} size="icon">
+              <AlignHorizontalSpaceAround />
+            </Button>
+            <Button onClick={alignLeft} size="icon">
+              <AlignStartVertical />
+            </Button>
+            <Button onClick={alignCenter} size="icon">
+              <AlignCenterVertical />
+            </Button>
+            <Button onClick={alignRight} size="icon">
+              <AlignEndVertical />
+            </Button>
+          </div>
         </div>
       </div>
       <div className="flex flex-row gap-7">

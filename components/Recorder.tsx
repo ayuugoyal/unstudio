@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "./ui/input";
-import { Copy } from "lucide-react";
+import { CirclePause, Copy, Upload, Video as VidIcon } from "lucide-react";
 import { toast } from "./ui/use-toast";
 
 const ScreenRecorder = () => {
@@ -72,7 +72,7 @@ const ScreenRecorder = () => {
       if (response.ok) {
         const data = await response.json();
         console.log("Uploaded to Cloudinary:", data);
-        setVideoUrl(data.msg.secure_url); // Save Cloudinary video URL to state
+        setVideoUrl(data.msg.secure_url);
       } else {
         console.error("Failed to upload to Cloudinary");
       }
@@ -84,10 +84,18 @@ const ScreenRecorder = () => {
 
   return (
     <div className="flex flex-col gap-2 w-96">
-      <Button onClick={() => startScreenRecording()}>Start Recording</Button>
-      <Button onClick={() => recorder && recorder.stop()}>
-        Stop Recording
-      </Button>
+      <div className="flex justify-between ">
+        <Button onClick={() => startScreenRecording()} className="flex gap-2">
+          <VidIcon />
+          Start Recording
+        </Button>
+        <Button
+          onClick={() => recorder && recorder.stop()}
+          className="flex gap-2"
+        >
+          <CirclePause /> Stop Recording
+        </Button>
+      </div>
       {recordedBlob && (
         <>
           <h1 className="text-xl font-bold mb-4 mt-3">Preview:</h1>
@@ -95,8 +103,19 @@ const ScreenRecorder = () => {
             <source src={URL.createObjectURL(recordedBlob)} type="video/webm" />
             Your browser does not support the video tag.
           </video>
-          <Button onClick={() => uploadToCloudinary()} disabled={loaded}>
-            {loaded ? <Loader /> : "Upload to Cloudinary"}
+          <Button
+            onClick={() => uploadToCloudinary()}
+            disabled={loaded}
+            className="flex gap-2"
+          >
+            {loaded ? (
+              <Loader />
+            ) : (
+              <>
+                <Upload />
+                Upload to Cloudinary
+              </>
+            )}
           </Button>
         </>
       )}
