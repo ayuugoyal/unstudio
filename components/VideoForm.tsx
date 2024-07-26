@@ -1,9 +1,10 @@
 "use client";
 import { useState } from "react";
-import VideoComposition from "./VideoComp";
+import { VideoComposition } from "./VideoComp";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { Player } from "@remotion/player";
 
 const VideoForm: React.FC = () => {
   const [introFile, setIntroFile] = useState<File | null>(null);
@@ -77,7 +78,24 @@ const VideoForm: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen">
+    <div className="flex justify-center items-center flex-col gap-6">
+      {introUrl && videoLink && outroUrl && (
+        <div className="flex justify-center items-center">
+          <Player
+            component={VideoComposition}
+            durationInFrames={1000}
+            compositionWidth={750}
+            compositionHeight={420}
+            controls
+            fps={30}
+            inputProps={{
+              introUrl,
+              outroUrl,
+              videoUrl: videoLink,
+            }}
+          />
+        </div>
+      )}
       <form onSubmit={handleSubmit} className="flex flex-col gap-1.5">
         <div className="w-[600px]">
           <Label>Upload Intro Video or Image:</Label>
@@ -116,13 +134,6 @@ const VideoForm: React.FC = () => {
           {loaded ? <Loader /> : "Generate Video"}
         </Button>
       </form>
-      {introUrl && videoLink && outroUrl && (
-        <VideoComposition
-          introUrl={introUrl}
-          videoUrl={videoLink}
-          outroUrl={outroUrl}
-        />
-      )}
     </div>
   );
 };
